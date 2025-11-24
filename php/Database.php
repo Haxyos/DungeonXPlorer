@@ -3,7 +3,7 @@
 // core/Database.php
 
 // Chemin vers le fichier .env
-$envFile = __DIR__ . '/../.env';
+$envFile = __DIR__ . '/php/.env';
 
 // Vérification de l'existence du fichier .env
 if (!file_exists($envFile)) {
