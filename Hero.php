@@ -49,9 +49,7 @@ abstract class Hero
         return $this->imagesrc;
     }
     abstract public function handtoHandAttack();
-    abstract public function castASpell();
+    abstract public function castASpell($spell);
     abstract public function takeDamage($damage);
     abstract public function isAlive();
-    abstract public function getShield();
-    
 }
