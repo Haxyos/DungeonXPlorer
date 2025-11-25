@@ -6,7 +6,6 @@ session_start();
     <title>DungeonXplorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Triangle rectangle gauche */
         .triangle-left {
             width: 0;
             height: 0;
@@ -14,7 +13,6 @@ session_start();
             border-left: 96px solid #941515;
         }
         
-        /* Triangle rectangle droit */
         .triangle-right {
             width: 0;
             height: 0;
@@ -23,7 +21,7 @@ session_start();
         }
     </style>
 </header>
-<body class="bg-[#1A1A1A] min-h-screen">
+<body class="bg-[#1A1A1A] min-h-screen flex flex-col">
     <nav class="fixed top-0 left-12">
         <div class="group relative -translate-y-[50%] hover:translate-y-0 transition-all duration-700 ease-in-out cursor-pointer">
             
@@ -32,8 +30,8 @@ session_start();
                 <div class="min-h-16 group-hover:min-h-0 transition-all duration-700 ease-in-out overflow-hidden">
                     <?php
                     $menuItems = [
-                        ['name' => 'Accueil', 'url' => '#accueil'],
-                        ['name' => 'Profil', 'url' => '#profil'],
+                        ['name' => 'Accueil', 'url' => '#'],
+                        ['name' => 'Profil', 'url' => '#'],
                     ];
                     
                     foreach ($menuItems as $item): ?>
