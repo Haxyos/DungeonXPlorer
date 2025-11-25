@@ -1,3 +1,7 @@
+<?php
+session_start();
+$_SESSION['user_id'] = 'fdqsfqsdf';
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -14,9 +18,20 @@
     </button>
 
     <div style="visibility: hidden;font-size: 1.25em; border: solid; padding: 0; margin:0;" id="profileText">
-        <a href="#" style="color: black; " >Sign in<br></a> <!-- retourne vers la page d'inscription -->
-        <a href="#" style="color: black; " >Sign up<br></a> <!-- retourne vers la page de connection -->
-        <a href="#" style="color: black;" >Resume Game<br></a> <!-- retourne vers la page des personnages pour que le joueur choisisse avec quel personnage continuer -->
+        <?php
+        if (isset($_SESSION['user_id'])) {
+            echo "
+            <a href='#' style='color: black;'>Settings</a><br>
+            <form action='../connection/logout.php' method='POST'>
+                <input type='submit' value='Sign out' />
+            </form>
+            ";
+        } else {
+            echo "<a href='../connection/login.php' style='color: black; '>Sign in</a><br> 
+            <a href='../connection/register.php' style='color: black; '>Sign up</a><br> ";
+        }
+        ?>
+
     </div>
 
 </body>
