@@ -5,51 +5,53 @@
 abstract class Monster
 {
     protected $name;
-    protected $class_id;
-    protected $class_name;
+    protected $classId;
+    protected $className;
     protected $imagesrc;
     protected $biography;
+    protected $secondaryWeapon;
+    /* put in different subclasses
     protected $health;
     protected $mana;
     protected $strength;
     protected $initiative;
     protected $armorItemId;
-    protected $primary_weapon;
+    protected $primaryWeapon;
+    protected $shieldItem;
+    protected $spellList;
+    */
     protected $xp;
+    protected $currentLevel;
 
-    public function __construct($name, $health, $mana, $experienceValue, $treasure)
+    public function __construct($name, $className, $imsrc, $biographie)
     {
         $this->name = $name;
-        $this->health = $health;
-        $this->mana = $mana;
-        $this->experienceValue = $experienceValue;
-        $this->treasure = $treasure;
+        $this->className = $className;
+        $this->imagesrc = $imsrc;
+        $this->biography = $biographie;
+        $this->secondaryWeapon = 0;
+        $this->xp = 0;
+        $this->currentLevel = 1;
     }
-
-    abstract public function attack();
 
     public function getName()
     {
         return $this->name;
     }
 
-    public function getHealth()
-    {
-        return $this->health;
+    public function getClass(){
+        return $this->className;
     }
-
-    public function getMana()
-    {
-        return $this->mana;
+    public function getBiography(){
+        return $this->biography;
     }
-
-    public function takeDamage($damage)
-    {
-        $this->health -= $damage;
+    public function getImSrc(){
+        return $this->imagesrc;
     }
-
-    public function isAlive()
-    {
-        return $this->health > 0;
-    }
+    abstract public function handtoHandAttack();
+    abstract public function castASpell();
+    abstract public function takeDamage($damage);
+    abstract public function isAlive();
+    abstract public function getShield();
+    
 }
