@@ -2,7 +2,7 @@
 
 // models/Orc.php
 
-class Wizard extends Hero
+class Stealer extends Hero
 {
     protected $health;
     protected $mana;
@@ -15,7 +15,7 @@ class Wizard extends Hero
     public function __construct($name, $class, $imagesrc, $bio, $initiative, $armorId, $primaryWeapon,$armorItem)
     {
         $this->spellList = ['spell1' => "", 'spell2' => ""];
-        $this->health = 10;
+        $this->health = 8;
         $this->mana = 0;
         $this->strength = 0;
         $this->initiative = $initiative;
@@ -29,10 +29,10 @@ class Wizard extends Hero
     {
         return $this->primaryWeapon->basicAttack();
     }
-    public function castASpell($spell)
-    {
-        return "you can't cast a spell ! ";
+    public function castASpell($spell){
+        return -1;
     }
+    
     public function takeDamage($damage)
     {
         $this->health -= $damage;

@@ -2,6 +2,12 @@
 <html lang="en">
 
 <?php
+
+require '../Classe/Warrior.php';
+require '../Classe/Stealer.php';
+require '../Classe/Wizard.php';
+require '../Classe/Hero.php';
+
 if (isset($_POST["characterName"]) && isset($_POST["class"]) && isset($_POST["descChar"])) {
     $nom = $_POST["characterName"];
     $class = $_POST["class"];
@@ -12,13 +18,15 @@ if (isset($_POST["characterName"]) && isset($_POST["class"]) && isset($_POST["de
     echo "<p>Classe : " . htmlspecialchars($class) . "</p>";
     echo "<p>Histoire : " . htmlspecialchars($descriptif) . "</p>";
 
-    if ($class == "Warrior") {
-        echo "warrior";
-    } else if ($class == "Wizard") {
-        echo "wizard";
-    } else if ($class == "Stealer") {
-        echo "stealer";
-    }
+    switch ($class) {
+        case "warrior":
+            $warrior = new Warrior($nom, $class, $descriptif, );
+            break;
+        case "wizard":
+            break;
+        case "stealer":
+            break;
+        }
 }
 ?>
 

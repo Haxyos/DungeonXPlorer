@@ -2,7 +2,7 @@
 
 // models/Orc.php
 
-class Wizard extends Hero
+class Warrior extends Hero
 {
     protected $health;
     protected $mana;
@@ -12,17 +12,17 @@ class Wizard extends Hero
     protected $primaryWeapon;
     protected $shieldItem;
     protected $spellList;
-    public function __construct($name, $class, $imagesrc, $bio, $initiative, $armorId, $primaryWeapon,$armorItem)
+    public function __construct($name, $class, $imagesrc = null, $bio, $initiative, $armorId, $primaryWeapon, $armorItem)
     {
         $this->spellList = ['spell1' => "", 'spell2' => ""];
-        $this->health = 8;
+        $this->health = 10;
         $this->mana = 0;
         $this->strength = 0;
         $this->initiative = $initiative;
         $this->armorItemId = $armorId;
         $this->armorItem = $armorItem;
         $this->primaryWeapon = $primaryWeapon;
-        parent::__construct($name, $class, $imagesrc, $bio, );
+        parent::__construct($name, $class, $bio);
     }
 
     public function handtoHandAttack()
@@ -31,7 +31,7 @@ class Wizard extends Hero
     }
     public function castASpell($spell)
     {
-        return "you can't cast a spell ! ";
+        return -1;
     }
     public function takeDamage($damage)
     {
@@ -39,10 +39,9 @@ class Wizard extends Hero
     }
     public function isAlive()
     {
-        if ($this->health > 0){
+        if ($this->health > 0) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -75,7 +74,8 @@ class Wizard extends Hero
         return $this->initiative;
     }
 
-    public function getPrimaryWeapon(){
+    public function getPrimaryWeapon()
+    {
         return $this->primaryWeapon;
     }
 }

@@ -23,11 +23,15 @@ abstract class Hero
     protected $xp;
     protected $currentLevel;
 
-    public function __construct($name, $className, $imsrc, $biographie)
+    public function __construct($name, $className, $imsrc = null, $biographie)
     {
         $this->name = $name;
         $this->className = $className;
-        $this->imagesrc = $imsrc;
+        if ($imsrc === null) {
+            $this->imagesrc = '../images/Berserker.jpg';
+        } else {
+            $this->imagesrc = $imsrc;
+        }
         $this->biography = $biographie;
         $this->secondaryWeapon = 0;
         $this->xp = 0;
@@ -39,14 +43,21 @@ abstract class Hero
         return $this->name;
     }
 
-    public function getClass(){
+    public function getClass()
+    {
         return $this->className;
     }
-    public function getBiography(){
+    public function getBiography()
+    {
         return $this->biography;
     }
-    public function getImSrc(){
+    public function getImSrc()
+    {
         return $this->imagesrc;
+    }
+    public function setImage($imsrc)
+    {
+        $this->imsrc = $imsrc;
     }
     abstract public function handtoHandAttack();
     abstract public function castASpell($spell);
