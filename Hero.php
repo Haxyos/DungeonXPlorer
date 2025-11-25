@@ -2,7 +2,7 @@
 
 // models/Monster.php
 
-abstract class Monster
+abstract class Hero
 {
     protected $name;
     protected $classId;
