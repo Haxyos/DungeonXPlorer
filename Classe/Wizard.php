@@ -75,8 +75,13 @@ class Wizard extends Hero
     {
         return $this->initiative;
     }
-
     public function getPrimaryWeapon(){
         return $this->primaryWeapon;
+    }
+    public function getExp(){
+        return $this->xp;
+    }
+    public function getLevel(){
+        return $this->currentLevel;
     }
 }

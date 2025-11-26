@@ -21,8 +21,9 @@ if (isset($_POST["characterName"]) && isset($_POST["class"]) && isset($_POST["de
 
     switch ($class) {
         case "warrior":
-            $warrior = new Warrior($nom, $class, $img, $descriptif, $initiative, $armure, $arme, );
-
+            $warrior = new Warrior($nom, 0, $img, $descriptif, $initiative, $armure, $arme, );
+            $db->prepare('INSERT INTO Hero (id, name, class_id, image, biographie, pv, mana, strength, initiative, armor_item_id, primary_weapon_item_id, shield_item_id, xp, current_level, user_id) VALUES (:valeur1, :valeur2, :valeur3, :valeur4, :valeur5, :valeur6, :valeur7, :valeur8, :valeur9, :valeur10, :valeur11, :valeur12 ,:valeur13, :valeur14)');
+            $stmt->execute(array('valeur1' => $warrior->getName(), 'valeur2' => $warrior->getClass(), 'valeur3' => $warrior->getImSrc(), 'valeur4' => $warrior->getBiography(), 'valeur5' => $warrior->getHealth(), 'valeur6' => $warrior->getMana(), 'valeur7' => $warrior->getStrength(), 'valeur8' => $warrior->getInitiative(), 'valeur9' => $warrior->getArmorItem(), 'valeur10' => $warrior->getPrimaryWeapon(), 'valeur11' => $warrior->getShield(), 'valeur12' => $warrior->getExp(), 'valeur13' => $warrior->getLevel(), 'valeur14' => $_SESSION['user_id']));
             break;
         case "wizard":
             $wizard = new Warrior($nom, $class, $img, $descriptif, $initiative, $armure, $arme, );
@@ -32,14 +33,11 @@ if (isset($_POST["characterName"]) && isset($_POST["class"]) && isset($_POST["de
             break;
     }
 }
+/*include "../php/components/header.php";*/
 ?>
-
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<header>
+    <script src="../CaracterCreation.php"></script>
+</header>
 
 <body>
     <form method="POST">
