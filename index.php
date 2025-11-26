@@ -1,20 +1,15 @@
 <?php
+    session_start();
     include_once("./php/components/header.php");
     $message = $_GET['message'] ?? '';
 ?>
 
-<style>
-    nav {
-        z-index: 50 !important;
-    }
-</style>
+<main class="min-h-screen flex flex-col items-center justify-center font-sans text-white bg-[#1A1A1A]">
 
-<main class="relative w-full min-h-screen flex flex-col items-center justify-center bg-fixed bg-cover bg-center font-sans text-white bg-[#1A1A1A]">
-
-    <div class="relative z-10 container mx-auto px-6 py-24 flex flex-col items-center text-center">
+    <div class="z-10 mx-auto px-6 py-24 flex flex-col items-center text-center">
 
         <div class="mb-16 animate-fade-in-down">
-            <h1 class="text-5xl md:text-7xl font-extrabold uppercase tracking-wider mb-4 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
+            <h1 class="text-5xl md:text-7xl font-extrabold uppercase mb-4 shadow-md">
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#f2a900] to-yellow-600">
                     Dungeon
                 </span>

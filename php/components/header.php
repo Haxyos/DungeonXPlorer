@@ -1,6 +1,3 @@
-<?php
-session_start();
-?>
 <html>
 <header>
     <title>DungeonXplorer</title>
@@ -53,24 +50,24 @@ session_start();
 
         </div>
     </nav>
-    <div class="object-top-right">
-        <button class="text-white" id="profileButton">
-            <i class="fa-regular fa-3x fa-circle-user "></i>
-        </button>
-        <div>
-            <div class="" id="profileText">
-                <?php
-                if (isset($_SESSION['user_id'])) {
-                    echo "
-            <a href='#' class=''>Settings</a><br>
-            <form action='../connection/logout.php' method='POST'>
-                <input type='submit' value='Sign out' />
-            </form>
+    <div>
+        <div class="absolute right-0 h-[5%] w-[5%]">
+            <button class="text-white" id="profileButton">
+                <i class="fa-regular fa-3x fa-circle-user "></i>
+            </button>
+        </div>
+    </div>
+    <div style="visibility: hidden;" class="absolute right-0 text-white m-10 border-solid border-2" id="profileText">
+        <?php
+        if (isset($_SESSION['user_id'])) {
+            echo "
+                <a href='#' class=''>Settings</a><br>
+                <a href='https://dev-dx01.users.info.unicaen.fr/php/connection/logout.php' >Sign out</a><br>
+                ";
+        } else {
+            echo "<a href='https://dev-dx01.users.info.unicaen.fr/php/connection/login.php'>Sign in</a><br> 
+                <a href='https://dev-dx01.users.info.unicaen.fr/php/connection/register.php'>Sign up</a><br> 
             ";
-                } else {
-                    echo "<a href='../connection/login.php' class=''>Sign in</a><br> 
-            <a href='../connection/register.php' class=''>Sign up</a><br> ";
-                }
-                ?>
-
-            </div>
+        }
+        ?>
+    </div>
