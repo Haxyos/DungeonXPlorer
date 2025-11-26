@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__. '/Hero.php';
 // models/Orc.php
 
 class Stealer extends Hero

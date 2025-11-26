@@ -1,7 +1,5 @@
 <?php
-
-// models/Orc.php
-
+require_once __DIR__. '/Hero.php';
 class Warrior extends Hero
 {
     protected $health;
@@ -22,7 +20,7 @@ class Warrior extends Hero
         $this->armorItemId = $armorId;
         $this->armorItem = $armorItem;
         $this->primaryWeapon = $primaryWeapon;
-        parent::__construct($name, $class, $bio);
+        parent::__construct($name, $class, $imagesrc, $bio);
     }
 
     public function handtoHandAttack()
