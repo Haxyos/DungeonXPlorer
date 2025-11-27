@@ -10,7 +10,7 @@ class Warrior extends Hero
     protected $primaryWeapon;
     protected $shieldItem;
     protected $spellList;
-    public function __construct($name, $class, $imagesrc = null, $bio, $initiative, $armorId, $primaryWeapon, $armorItem)
+    public function __construct($name, $class, $imagesrc = null, $bio, $initiative, $armorId, $primaryWeapon, $shield)
     {
         $this->spellList = ['spell1' => "", 'spell2' => ""];
         $this->health = 10;
@@ -18,7 +18,7 @@ class Warrior extends Hero
         $this->strength = 0;
         $this->initiative = $initiative;
         $this->armorItemId = $armorId;
-        $this->armorItem = $armorItem;
+        $this->shieldItem = $shield;
         $this->primaryWeapon = $primaryWeapon;
         parent::__construct($name, $class, $imagesrc, $bio);
     }

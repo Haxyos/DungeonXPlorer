@@ -10,9 +10,8 @@ class Stealer extends Hero
     protected $initiative;
     protected $armorItemId;
     protected $primaryWeapon;
-    protected $shieldItem;
     protected $spellList;
-    public function __construct($name, $class, $imagesrc, $bio, $initiative, $armorId, $primaryWeapon,$armorItem)
+    public function __construct($name, $class, $imagesrc, $bio, $initiative, $armorId, $primaryWeapon)
     {
         $this->spellList = ['spell1' => "", 'spell2' => ""];
         $this->health = 8;
@@ -20,7 +19,6 @@ class Stealer extends Hero
         $this->strength = 0;
         $this->initiative = $initiative;
         $this->armorItemId = $armorId;
-        $this->armorItem = $armorItem;
         $this->primaryWeapon = $primaryWeapon;
         parent::__construct($name, $class, $imagesrc, $bio, );
     }
@@ -45,10 +43,6 @@ class Stealer extends Hero
         else {
             return false;
         }
-    }
-    public function getShield()
-    {
-        return $this->shieldItem;
     }
     public function getHealth()
     {

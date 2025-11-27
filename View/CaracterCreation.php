@@ -21,15 +21,19 @@ if (isset($_POST["characterName"]) && isset($_POST["class"]) && isset($_POST["de
 
     switch ($class) {
         case "warrior":
-            $warrior = new Warrior($nom, 0, $img, $descriptif, $initiative, $armure, $arme, );
+            $warrior = new Warrior($nom, 0, $img, $descriptif, $initiative, $armure, $arme, 0);
             $db->prepare('INSERT INTO Hero (id, name, class_id, image, biographie, pv, mana, strength, initiative, armor_item_id, primary_weapon_item_id, shield_item_id, xp, current_level, user_id) VALUES (:valeur1, :valeur2, :valeur3, :valeur4, :valeur5, :valeur6, :valeur7, :valeur8, :valeur9, :valeur10, :valeur11, :valeur12 ,:valeur13, :valeur14)');
             $stmt->execute(array('valeur1' => $warrior->getName(), 'valeur2' => $warrior->getClass(), 'valeur3' => $warrior->getImSrc(), 'valeur4' => $warrior->getBiography(), 'valeur5' => $warrior->getHealth(), 'valeur6' => $warrior->getMana(), 'valeur7' => $warrior->getStrength(), 'valeur8' => $warrior->getInitiative(), 'valeur9' => $warrior->getArmorItem(), 'valeur10' => $warrior->getPrimaryWeapon(), 'valeur11' => $warrior->getShield(), 'valeur12' => $warrior->getExp(), 'valeur13' => $warrior->getLevel(), 'valeur14' => $_SESSION['user_id']));
             break;
         case "wizard":
-            $wizard = new Warrior($nom, $class, $img, $descriptif, $initiative, $armure, $arme, );
+            $wizard = new Wizard($nom, 1, $img, $descriptif, $initiative, $armure, $arme);
+            $db->prepare('INSERT INTO Hero (id, name, class_id, image, biographie, pv, mana, strength, initiative, armor_item_id, primary_weapon_item_id, shield_item_id, xp, current_level, user_id) VALUES (:valeur1, :valeur2, :valeur3, :valeur4, :valeur5, :valeur6, :valeur7, :valeur8, :valeur9, :valeur10, :valeur11, :valeur12 ,:valeur13, :valeur14)');
+            $stmt->execute(array('valeur1' => $wizard->getName(), 'valeur2' => $wizard->getClass(), 'valeur3' => $wizard->getImSrc(), 'valeur4' => $wizard->getBiography(), 'valeur5' => $wizard->getHealth(), 'valeur6' => $wizard->getMana(), 'valeur7' => $wizard->getStrength(), 'valeur8' => $wizard->getInitiative(), 'valeur9' => $wizard->getArmorItem(), 'valeur10' => $wizard->getPrimaryWeapon(), 'valeur11' => $wizard->getShield(), 'valeur12' => $wizard->getExp(), 'valeur13' => $wizard->getLevel(), 'valeur14' => $_SESSION['user_id']));
             break;
         case "stealer":
-            $stealer = new Warrior($nom, $class, $img, $descriptif, $initiative, $armure, $arme, );
+            $stealer = new Stealer($nom, $class, $img, $descriptif, $initiative, $armure, $arme);
+            $db->prepare('INSERT INTO Hero (id, name, class_id, image, biographie, pv, mana, strength, initiative, armor_item_id, primary_weapon_item_id, shield_item_id, xp, current_level, user_id) VALUES (:valeur1, :valeur2, :valeur3, :valeur4, :valeur5, :valeur6, :valeur7, :valeur8, :valeur9, :valeur10, 0, :valeur12 ,:valeur13, :valeur14)');
+            $stmt->execute(array('valeur1' => $stealer->getName(), 'valeur2' => $stealer->getClass(), 'valeur3' => $stealer->getImSrc(), 'valeur4' => $stealer->getBiography(), 'valeur5' => $stealer->getHealth(), 'valeur6' => $stealer->getMana(), 'valeur7' => $stealer->getStrength(), 'valeur8' => $stealer->getInitiative(), 'valeur9' => $stealer->getArmorItem(), 'valeur10' => $stealer->getPrimaryWeapon(), 'valeur12' => $stealer->getExp(), 'valeur13' => $stealer->getLevel(), 'valeur14' => $_SESSION['user_id']));
             break;
     }
 }
