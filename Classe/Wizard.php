@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__. '/Hero.php';
 // models/Orc.php
+require_once __DIR__. '../php/Database.php';
 
 class Wizard extends Hero
 {
@@ -12,7 +13,12 @@ class Wizard extends Hero
     protected $primaryWeapon;
     protected $shieldItem;
     protected $spellList;
-    public function __construct($name, $class, $imagesrc, $bio, $initiative, $armorId, $primaryWeapon)
+    public function __construct()
+    {
+        
+    }
+
+    public function constructeurAvecParam ($name, $class, $imagesrc, $bio, $initiative, $armorId, $primaryWeapon, $health)
     {
         $this->spellList = ['spell1' => "", 'spell2' => ""];
         $this->health = 6;
@@ -20,9 +26,33 @@ class Wizard extends Hero
         $this->strength = 0;
         $this->initiative = $initiative;
         $this->armorItemId = $armorId;
-        $this->armorItem = 0;
         $this->primaryWeapon = $primaryWeapon;
-        parent::__construct($name, $class, $imagesrc, $bio, );
+        parent::__construct($name, $class, $imagesrc, $bio);
+    }
+
+    public function constructeurPréfait($id_personnage)
+    {
+        $stmt = $db->prepare('SELECT * FROM Hero WHERE id = :id');
+        $stmt->execute(['id' => $id_personnage]);
+        $hero = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $stmt = $db->prepare('SELECT * FROM Pouvoir WHERE id_heros = :id');
+        $stmt->execute(['id' => $id_personnage]);
+        $pouvoir = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $listSpellTemp = array();
+        foreach($pouvoir as $spell) {
+            array_push($listSpellTemp, $spell['id_spell']);
+        }
+
+        $this->spellList = $listSpellTemp;
+        $this->health = $hero['pv'];
+        $this->mana = $hero['mana'];
+        $this->strength = $hero['strength'];
+        $this->initiative = $hero['initiative'];
+        $this->armorItemId = $hero['armor_item_id'];
+        $this->primaryWeapon = $hero['primary_weapon_item_id'];
+        parent::__construct($hero['name'], $hero['class_id'], $hero['image'], $hero['biography']);
     }
 
     public function handtoHandAttack()
