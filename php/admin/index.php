@@ -190,10 +190,6 @@ function showTab(tabName) {
 }
 </script>
 
-
-
-
-
 <?php
 include_once('../components/footer.php');
 ?>
