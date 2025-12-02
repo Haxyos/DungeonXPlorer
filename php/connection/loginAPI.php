@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         if ($user && password_verify($password, $user['motDePasse'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_mail'] = $user['email'];
+            $_SESSION['username'] = $user['username'];
             header("Location: /index.php");
             exit;
         } else {
