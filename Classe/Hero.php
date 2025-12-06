@@ -33,7 +33,7 @@ abstract class Hero
             $this->imagesrc = $imsrc;
         }
         $this->biography = $biographie;
-        $this->secondaryWeapon = 0;
+        $this->secondaryWeapon = 1;
         $this->xp = 0;
         $this->currentLevel = 1;
     }
