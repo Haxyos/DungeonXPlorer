@@ -5,18 +5,20 @@
 abstract class Monster
 {
     protected $name;
-    protected $health;
+    protected $pv;
     protected $mana;
     protected $experienceValue;
     protected $treasure;
+    protected $force;
 
-    public function __construct($name, $health, $mana, $experienceValue, $treasure)
+    public function __construct($name, $health, $mana, $experienceValue, $treasure, $strength)
     {
         $this->name = $name;
-        $this->health = $health;
+        $this->pv = $health;
         $this->mana = $mana;
         $this->experienceValue = $experienceValue;
         $this->treasure = $treasure;
+        $this->force = $strength;
     }
 
     abstract public function attack();
@@ -28,7 +30,7 @@ abstract class Monster
 
     public function getHealth()
     {
-        return $this->health;
+        return $this->pv;
     }
 
     public function getMana()
@@ -38,12 +40,12 @@ abstract class Monster
 
     public function takeDamage($damage)
     {
-        $this->health -= $damage;
+        $this->pv -= $damage;
     }
 
     public function isAlive()
     {
-        return $this->health > 0;
+        return $this->pv > 0;
     }
 
     public function getExperienceValue()

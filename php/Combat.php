@@ -1,32 +1,38 @@
 <?php
-include_once 'Database.php';
+
+include("./Database.php");
 // Select dans la base pour créer les deux personnages 
 function chercheMonstre($id_chapitre){
-    global $db;
-    $valeurMonstre = $db -> prepare ("SELECT pv,mana,initiative,strength, FROM monstres WHERE id_chapitre = :id_chapitre");
-    $valeurMonstre -> execute (['id_chapitre' => $id_chapitre]);
-    $monstre = new Monster();
+    include_once("./Database.php");
+    $stmt = $db->query ("SELECT name, health, mana, experienceValue, treasure, strength FROM monstres WHERE id_chapitre = :id_chapitre");
+    $stmt -> execute (['id_chapitre' => $id_chapitre]);
+    $values = $stmt->fetchall();
+    $monstre = new Monster($values['name'], $values['health'], $values['mana'], $values['experienceValue'], $values['treasure'], $values['strength']);
     return $monstre;
 }
 
-function tourCombat($attaquant,$defenseur) {
+function tourCombat($attaquant, $defenseur) {
     $initiativeAttaquant = rand(1, 6) + $attaquant->initiative;
     $initiativeDefenseur = rand(1, 6) + $defenseur->initiative;
     // Détermination de l'attaquant
-    if ($initiativeAttaquant > $initiativeDefenseur || $attaquant->classe == 'Voleur') {
+    if($initiativeAttaquant == $initiativeDefenseur && ($attaquant->classe != 'Monstre' ||  $attaquant->classe != 'Voleur')){
+            return;
+    }
+    elseif ($initiativeAttaquant > $initiativeDefenseur) {
+        
         // Choix de l’action par l'attaquant
         $choix = $attaquant->choisirAction(); // 'physique', 'magie', ou 'potion'
-        if ($choix === 'physique') {
+        if ($choix === 'physique' ||$attaquant -> classe == 'Monstre') {
         // Attaque physique
             $attaque = rand(1, 6) + $attaquant->force + $attaquant->arme->bonus;
             $defense = rand(1, 6) + (int)($defenseur->force / 2) + $defenseur->armure->bonus;
             $degats = max(0, $attaque - $defense);
             $defenseur->pv -= $degats;
         } 
-        elseif ( $attaquant -> classe = 'Monstre' || $choix === 'magie' && $attaquant->classe == 'Magicien') {
+        elseif ( $choix === 'magie' && $attaquant->classe == 'Magicien') {
         // Attaque magique
             $sort = $attaquant -> choisirSort();
-            if ($sort -> cout_sort < $attaquant){
+            if ($sort -> cout_sort < $attaquant -> mana){
                 $attaque_magique = (rand(1, 6) + rand(1, 6)) + $sort -> cout_sort;
                 $attaquant->mana -= $sort -> cout_sort;
                 $defense = rand(1, 6) + (int)($defenseur->force / 2) + $defenseur->armure->bonus;
