@@ -24,24 +24,73 @@
     require '../Classe/Stealer.php';
     require '../Classe/Wizard.php';
 
-    if (isset($_POST["characterName"]) && isset($_POST["class"]) && isset($_POST["descChar"]) && isset($_POST["initiative"]) && isset($_POST["arme"]) && isset($_POST["armure"])) {
+    // Récupérer tous les sorts disponibles pour le sorcier
+    $spells = [];
+    try {
+        $spellQuery = $db->query("SELECT id, nom, cout_mana FROM Spell ORDER BY cout_mana ASC");
+        $spells = $spellQuery->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Ignorer si la table n'existe pas encore
+    }
+
+    if (isset($_POST["characterName"]) && isset($_POST["class"]) && isset($_POST["descChar"]) && isset($_POST["initiative"])) {
         $nom = trim($_POST["characterName"]);
         $class = strtolower($_POST["class"]);
         $descriptif = trim($_POST["descChar"]);
         $initiative = intval($_POST["initiative"]);
-        $arme = intval($_POST["arme"]);
-        $armure = intval($_POST["armure"]);
-        $bouclier = isset($_POST["bouclier"]) ? intval($_POST["bouclier"]) : 0;
         $img = 'https://via.placeholder.com/300x400/1a1a1a/f2a900?text=Hero';
 
+        // Définir les équipements selon la classe
+        switch ($class) {
+            case "warrior":
+            case "guerrier":
+                $arme = 10;      // Épée courte
+                $armure = 40;    // Armure de cuir
+                $bouclier = 30;  // Bouclier en bois
+                break;
+            case "wizard":
+            case "sorcier":
+                $arme = 14;      // Bâton du sage
+                $armure = 43;    // Robe de mage
+                $bouclier = 0;   // Pas de bouclier
+                // Vérifier que 3 sorts sont sélectionnés
+                if (!isset($_POST['spell1']) || !isset($_POST['spell2']) || !isset($_POST['spell3'])) {
+                    $errorMessage = "Le sorcier doit choisir 3 sorts !";
+                    goto skip_creation;
+                }
+                $spell1 = intval($_POST['spell1']);
+                $spell2 = intval($_POST['spell2']);
+                $spell3 = intval($_POST['spell3']);
+                
+                // Vérifier que les 3 sorts sont différents
+                if ($spell1 == $spell2 || $spell1 == $spell3 || $spell2 == $spell3) {
+                    $errorMessage = "Vous devez choisir 3 sorts différents !";
+                    goto skip_creation;
+                }
+                break;
+            case "stealer":
+            case "voleur":
+                $arme = 13;      // Dague empoisonnée
+                $armure = 44;    // Tunique de voleur
+                $bouclier = 0;   // Pas de bouclier
+                break;
+            default:
+                $errorMessage = "Classe invalide !";
+                goto skip_creation;
+        }
+
         try {
+            // Commencer une transaction pour tout insérer ensemble
+            $db->beginTransaction();
+
             $stmt = $db->prepare('INSERT INTO Hero (name, class_id, image, biography, pv, mana, strength, initiative, armor_item_id, primary_weapon_item_id, shield_item_id, xp, current_level, user_id) 
                               VALUES (:name, :class_id, :image, :biography, :pv, :mana, :strength, :initiative, :armor, :weapon, :shield, :xp, :level, :user_id)');
 
             switch ($class) {
                 case "warrior":
                 case "guerrier":
-                    $warrior = new Warrior($nom, $class, $img, $descriptif, $initiative, $armure, $arme, $bouclier);
+                    $warrior = new Warrior();
+                    $warrior->constructeurAvecParam($nom, $class, $img, $descriptif, $initiative, $armure, $arme, $bouclier);
                     $stmt->execute([
                         'name' => $warrior->getName(),
                         'class_id' => 1,
@@ -58,12 +107,14 @@
                         'level' => $warrior->getLevel(),
                         'user_id' => $_SESSION['user_id']
                     ]);
-                    $successMessage = "✓ Guerrier créé avec succès !";
+                    $heroId = $db->lastInsertId();
+                    $successMessage = "✓ Guerrier créé avec succès ! Équipé d'une épée courte, d'une armure de cuir et d'un bouclier en bois.";
                     break;
 
                 case "wizard":
                 case "sorcier":
-                    $wizard = new Wizard($nom, $class, $img, $descriptif, $initiative, $armure, $arme);
+                    $wizard = new Wizard();
+                    $wizard->constructeurAvecParam($nom, $class, $img, $descriptif, $initiative, $armure, $arme);
                     $stmt->execute([
                         'name' => $wizard->getName(),
                         'class_id' => 2,
@@ -80,12 +131,21 @@
                         'level' => $wizard->getLevel(),
                         'user_id' => $_SESSION['user_id']
                     ]);
-                    $successMessage = "✓ Mage créé avec succès !";
+                    $heroId = $db->lastInsertId();
+                    
+                    // Ajouter les 3 sorts dans la table Pouvoir
+                    $spellStmt = $db->prepare('INSERT INTO Pouvoir (id_heros, id_spell) VALUES (:hero_id, :spell_id)');
+                    $spellStmt->execute(['hero_id' => $heroId, 'spell_id' => $spell1]);
+                    $spellStmt->execute(['hero_id' => $heroId, 'spell_id' => $spell2]);
+                    $spellStmt->execute(['hero_id' => $heroId, 'spell_id' => $spell3]);
+                    
+                    $successMessage = "✓ Mage créé avec succès ! Équipé d'un bâton du sage et d'une robe de mage, avec 3 sorts maîtrisés.";
                     break;
 
                 case "stealer":
                 case "voleur":
-                    $stealer = new Stealer($nom, $class, $img, $descriptif, $initiative, $armure, $arme);
+                    $stealer = new Stealer();
+                    $stealer->constructeurAvecParam($nom, $class, $img, $descriptif, $initiative, $armure, $arme);
                     $stmt->execute([
                         'name' => $stealer->getName(),
                         'class_id' => 3,
@@ -102,13 +162,21 @@
                         'level' => $stealer->getLevel(),
                         'user_id' => $_SESSION['user_id']
                     ]);
-                    $successMessage = "✓ Voleur créé avec succès !";
+                    $heroId = $db->lastInsertId();
+                    $successMessage = "✓ Voleur créé avec succès ! Équipé d'une dague empoisonnée et d'une tunique de voleur.";
                     break;
             }
 
+            // Valider la transaction
+            $db->commit();
+
         } catch (PDOException $e) {
+            // Annuler en cas d'erreur
+            $db->rollBack();
             $errorMessage = "Erreur : " . $e->getMessage();
         }
+        
+        skip_creation:
     }
     ?>
 
@@ -154,14 +222,14 @@
 
         <!-- Formulaire principal -->
         <div class="bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-8 mb-6">
-            <form method="POST" class="space-y-6">
+            <form method="POST" class="space-y-6" id="characterForm">
                 <!-- Nom du personnage -->
                 <div>
                     <label class="block text-yellow-500 font-semibold mb-2 text-lg">
                         📜 Nom du personnage
                     </label>
                     <input type="text" name="characterName" required placeholder="Entrez le nom de votre héros"
-                        class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition">
+                        class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition" required>
                 </div>
 
                 <!-- Classe -->
@@ -169,12 +237,63 @@
                     <label class="block text-yellow-500 font-semibold mb-2 text-lg">
                         ⚔️ Classe
                     </label>
-                    <select name="class" required
+                    <select name="class" id="classSelect" required
                         class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition cursor-pointer">
                         <option value="warrior">🛡️ Guerrier - Tank puissant (10 PV, 0 Mana)</option>
                         <option value="wizard">🔮 Sorcier - Maître des arcanes (6 PV, 4 Mana)</option>
                         <option value="stealer">🗡️ Voleur - Agile et discret (8 PV, 0 Mana)</option>
                     </select>
+                </div>
+
+                <!-- Équipement automatique -->
+                <div id="equipmentInfo" class="bg-gray-900 border border-gray-600 rounded-lg p-4">
+                    <h3 class="text-yellow-500 font-semibold mb-3 text-lg">🎒 Équipement de départ</h3>
+                    <div id="equipmentDetails" class="text-gray-300 space-y-2">
+                        <!-- Rempli dynamiquement par JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Sorts (sorcier uniquement) -->
+                <div id="spellsDiv" style="display: none;">
+                    <h3 class="text-yellow-500 font-semibold mb-3 text-lg">✨ Choisissez 3 sorts</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gray-300 mb-2">Premier sort :</label>
+                            <select name="spell1" 
+                                class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition cursor-pointer">
+                                <option value="">-- Choisir un sort --</option>
+                                <?php foreach ($spells as $spell): ?>
+                                    <option value="<?= $spell['id'] ?>">
+                                        <?= htmlspecialchars($spell['nom']) ?> (<?= $spell['cout_mana'] ?> mana)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 mb-2">Deuxième sort :</label>
+                            <select name="spell2" 
+                                class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition cursor-pointer">
+                                <option value="">-- Choisir un sort --</option>
+                                <?php foreach ($spells as $spell): ?>
+                                    <option value="<?= $spell['id'] ?>">
+                                        <?= htmlspecialchars($spell['nom']) ?> (<?= $spell['cout_mana'] ?> mana)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 mb-2">Troisième sort :</label>
+                            <select name="spell3" 
+                                class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition cursor-pointer">
+                                <option value="">-- Choisir un sort --</option>
+                                <?php foreach ($spells as $spell): ?>
+                                    <option value="<?= $spell['id'] ?>">
+                                        <?= htmlspecialchars($spell['nom']) ?> (<?= $spell['cout_mana'] ?> mana)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Histoire -->
@@ -191,75 +310,15 @@
                     <label class="block text-yellow-500 font-semibold mb-2 text-lg">
                         ⚡ Initiative (bonus)
                     </label>
-                    <input type="number" name="initiative" value="0" min="0" max="10" required
+                    <input type="number" name="initiative" id="initiativeInput" value="0" min="0" max="10" required
                         class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition">
-                    <p class="text-gray-500 text-sm mt-1">Entre 0 et 10 - Détermine qui attaque en premier</p>
-                </div>
-
-                <!-- Arme -->
-                <div>
-                    <label class="block text-yellow-500 font-semibold mb-2 text-lg">
-                        ⚔️ Arme de départ
-                    </label>
-                    <select name="arme" required
-                        class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition cursor-pointer">
-                        <option value="2">Sans arme</option>
-                        <option value="10">Épée courte (+2 Force)</option>
-                        <option value="13">Dague empoisonnée (+3 Force)</option>
-                        <option value="14">Bâton du sage (+1 Force, +5 Mana)</option>
-                    </select>
-                </div>
-
-                <!-- Armure -->
-                <div>
-                    <label class="block text-yellow-500 font-semibold mb-2 text-lg">
-                        🛡️ Armure de départ
-                    </label>
-                    <select name="armure" required
-                        class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition cursor-pointer">
-                        <option value="1">Sans armure</option>
-                        <option value="40">Armure de cuir (+3 PV)</option>
-                        <option value="43">Robe de mage (+2 PV, +3 Mana)</option>
-                        <option value="44">Tunique de voleur (+2 PV, +2 Initiative)</option>
-                    </select>
-                </div>
-
-                <!-- Bouclier -->
-                <div id="shield-div">
-                    <label class="block text-yellow-500 font-semibold mb-2 text-lg">
-                        🛡️ Bouclier (Guerrier seulement)
-                    </label>
-                    <select name="bouclier"
-                        class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition cursor-pointer">
-                        <option value="3">Sans bouclier</option>
-                        <option value="30">Bouclier en bois (+2 PV)</option>
-                        <option value="31">Bouclier en fer (+4 PV)</option>
-                    </select>
+                    <p class="text-gray-500 text-sm mt-1" id="initiativeHelp">Entre 0 et 10 - Détermine qui attaque en premier</p>
                 </div>
 
                 <!-- Bouton Submit -->
                 <button type="submit" name="create"
                     class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-6 rounded-lg transition transform hover:scale-105 active:scale-95 shadow-lg text-lg uppercase tracking-wide">
                     🎭 Créer mon personnage
-                </button>
-            </form>
-        </div>
-
-        <!-- Séparateur -->
-        <div class="flex items-center my-8">
-            <div class="flex-1 border-t border-gray-700"></div>
-            <span class="px-4 text-gray-500 text-sm uppercase tracking-wider">ou</span>
-            <div class="flex-1 border-t border-gray-700"></div>
-        </div>
-
-        <!-- Bouton personnage par défaut -->
-        <div class="bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-6 text-center">
-            <h3 class="text-xl font-bold text-white mb-3">Test rapide</h3>
-            <p class="text-gray-400 mb-4">Créez un personnage de test pour découvrir le jeu rapidement</p>
-            <form method="POST">
-                <button type="submit" name="default"
-                    class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-lg transition transform hover:scale-105 active:scale-95 uppercase tracking-wide">
-                    ⚡ Personnage par défaut
                 </button>
             </form>
         </div>
@@ -273,22 +332,73 @@
     </div>
 
     <script>
-        // Cache le champ bouclier si ce n'est pas un guerrier
-        const classSelect = document.querySelector('select[name="class"]');
-        const shieldDiv = document.getElementById('shield-div');
+        const classSelect = document.getElementById('classSelect');
+        const equipmentDetails = document.getElementById('equipmentDetails');
+        const spellsDiv = document.getElementById('spellsDiv');
+        const initiativeInput = document.getElementById('initiativeInput');
+        const initiativeHelp = document.getElementById('initiativeHelp');
 
-        classSelect.addEventListener('change', function () {
-            if (this.value === 'warrior' || this.value === 'guerrier') {
-                shieldDiv.style.display = 'block';
-            } else {
-                shieldDiv.style.display = 'none';
+        const equipmentByClass = {
+            'warrior': {
+                weapon: '⚔️ Épée courte (+2 Force)',
+                armor: '🛡️ Armure de cuir (+3 PV)',
+                shield: '🛡️ Bouclier en bois (+2 PV)'
+            },
+            'wizard': {
+                weapon: '🪄 Bâton du sage (+1 Force, +5 Mana)',
+                armor: '👘 Robe de mage (+2 PV, +3 Mana)',
+                shield: null
+            },
+            'stealer': {
+                weapon: '🗡️ Dague empoisonnée (+3 Force)',
+                armor: '🥷 Tunique de voleur (+2 PV, +2 Initiative)',
+                shield: null
             }
-        });
+        };
 
-        // Initialisation au chargement
-        if (classSelect.value !== 'warrior') {
-            shieldDiv.style.display = 'none';
+        function updateEquipment() {
+            const selectedClass = classSelect.value;
+            const equipment = equipmentByClass[selectedClass];
+            
+            let html = `<p class="flex items-center"><span class="mr-2">•</span> ${equipment.weapon}</p>`;
+            html += `<p class="flex items-center"><span class="mr-2">•</span> ${equipment.armor}</p>`;
+            if (equipment.shield) {
+                html += `<p class="flex items-center"><span class="mr-2">•</span> ${equipment.shield}</p>`;
+            }
+            
+            equipmentDetails.innerHTML = html;
+
+            // Afficher les sorts uniquement pour le sorcier
+            if (selectedClass === 'wizard') {
+                spellsDiv.style.display = 'block';
+                document.querySelector('select[name="spell1"]').required = true;
+                document.querySelector('select[name="spell2"]').required = true;
+                document.querySelector('select[name="spell3"]').required = true;
+            } else {
+                spellsDiv.style.display = 'none';
+                document.querySelector('select[name="spell1"]').required = false;
+                document.querySelector('select[name="spell2"]').required = false;
+                document.querySelector('select[name="spell3"]').required = false;
+            }
+
+            // Modifier les limites d'initiative pour le voleur
+            if (selectedClass === 'stealer') {
+                initiativeInput.min = 10;
+                initiativeInput.max = 20;
+                initiativeInput.value = 10;
+                initiativeHelp.textContent = 'Entre 10 et 20 - Le voleur est naturellement agile !';
+            } else {
+                initiativeInput.min = 0;
+                initiativeInput.max = 10;
+                initiativeInput.value = 0;
+                initiativeHelp.textContent = 'Entre 0 et 10 - Détermine qui attaque en premier';
+            }
         }
+
+        classSelect.addEventListener('change', updateEquipment);
+        
+        // Initialisation
+        updateEquipment();
     </script>
 
 </body>
