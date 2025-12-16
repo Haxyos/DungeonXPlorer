@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__. '/Hero.php';
 // models/Orc.php
-require_once __DIR__. '/../php/Database.php';
+require_once __DIR__. '../php/Database.php';
 
 class Wizard extends Hero
 {
@@ -18,12 +18,12 @@ class Wizard extends Hero
         
     }
 
-    public function constructeurAvecParam ($name, $class, $imagesrc, $bio, $initiative, $armorId, $primaryWeapon)
+    public function constructeurAvecParam ($name, $class, $imagesrc, $bio, $initiative, $armorId, $primaryWeapon, $health)
     {
         $this->spellList = ['spell1' => "", 'spell2' => ""];
         $this->health = 6;
         $this->mana = 4;
-        $this->strength = 3;
+        $this->strength = 0;
         $this->initiative = $initiative;
         $this->armorItemId = $armorId;
         $this->primaryWeapon = $primaryWeapon;
@@ -32,11 +32,6 @@ class Wizard extends Hero
 
     public function constructeurPréfait($id_personnage)
     {
-        global $db;
-        if(!isset($db)) { // Vérification que db existe
-            die("Erreur: La connexion à la base de données n'est pas établie.");
-        }
-
         $stmt = $db->prepare('SELECT * FROM Hero WHERE id = :id');
         $stmt->execute(['id' => $id_personnage]);
         $hero = $stmt->fetch(PDO::FETCH_ASSOC);

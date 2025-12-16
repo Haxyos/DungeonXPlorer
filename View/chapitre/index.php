@@ -1,6 +1,11 @@
 <?php
-// view/chapter.php
-
+require_once '../../Controller/ChapterController.php';
+$chapterId = $_GET["chapter"] ?? '';
+if(!$chapterId){
+    header("Location: /index.php");
+    exit;
+}
+$chapterController = new ChapterController();
 $chapter = $chapterController->getChapter($chapterId);
 ?>
 
