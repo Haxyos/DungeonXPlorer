@@ -13,9 +13,14 @@ $stmt = $db->prepare('SELECT * FROM Chapter WHERE id = ?');
 $stmt->execute([$id]);
 $chapter = $stmt->fetch();
 
+if (!$chapter) {
+    header("Location: ./index.php");
+    exit;
+}
+
 $stmt = $db->prepare('SELECT next_chapter_id, description FROM Links WHERE chapter_id = ?');
 $stmt->execute([$id]);
-$existingLinks = $stmt->fetchAll();
+$existingLinks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $linkedChapters = [];
 foreach ($existingLinks as $link) {
@@ -25,7 +30,6 @@ foreach ($existingLinks as $link) {
 
 <div class="container mx-auto px-4 mt-16 mb-16">
     <div class="max-w-3xl mx-auto">
-
         <div class="mb-8">
             <a href="./index.php"
                 class="text-gray-400 hover:text-white transition-colors inline-flex items-center gap-2 mb-4">
@@ -40,7 +44,6 @@ foreach ($existingLinks as $link) {
 
         <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <form action="update-chapter.php" method="POST" class="p-6">
-
                 <input type="hidden" name="id" value="<?= $chapter['id'] ?>">
 
                 <div class="mb-4">
@@ -82,9 +85,9 @@ foreach ($existingLinks as $link) {
                     <div class="bg-gray-700/30 border border-gray-600 rounded-lg p-4 max-h-96 overflow-y-auto">
                         <?php
                         $chapters = $db->query('SELECT * FROM Chapter WHERE id != ' . $id . ' ORDER BY id');
-                        if ($chapters->rowCount() == 0):
-                            echo '<p class="text-gray-400 text-sm text-center py-4">Aucun autre chapitre disponible</p>';
-                        else: ?>
+                        if ($chapters->rowCount() == 0): ?>
+                            <p class="text-gray-400 text-sm text-center py-4">Aucun autre chapitre disponible</p>
+                        <?php else: ?>
                             <div class="space-y-3" id="next-chapters-container">
                                 <?php foreach ($chapters as $chap):
                                     $isLinked = isset($linkedChapters[$chap['id']]);
@@ -108,7 +111,6 @@ foreach ($existingLinks as $link) {
                                                 </div>
                                             </div>
                                         </label>
-
                                         <div id="choice-text-<?= $chap['id']; ?>"
                                             class="<?= $isLinked ? '' : 'hidden' ?> px-3 pb-3 pt-0">
                                             <label class="block text-xs text-gray-400 mb-2 ml-8">
@@ -131,7 +133,23 @@ foreach ($existingLinks as $link) {
                         <?php endif; ?>
                     </div>
                 </div>
-
+                <div class="mb-6">
+                    <label for="monster_id" class="block text-sm font-semibold text-gray-300 mb-2">
+                        Monstre du chapitre <span class="text-gray-500 text-xs">(optionnel)</span>
+                    </label>
+                    <select id="monster_id" name="monster_id"
+                        class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#941515] focus:border-transparent transition-all">
+                        <option value="">Aucun monstre</option>
+                        <?php
+                        $monsters = $db->query('SELECT * FROM Monster ORDER BY name');
+                        foreach ($monsters as $monster): ?>
+                            <option value="<?= $monster['id'] ?>">
+                                <?= htmlspecialchars($monster['name']) ?> (PV: <?= $monster['pv'] ?>, XP:
+                                <?= $monster['xp'] ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <div class="flex gap-3 justify-end pt-4 border-t border-gray-700">
                     <a href="./index.php"
                         class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors font-semibold">
@@ -154,7 +172,6 @@ foreach ($existingLinks as $link) {
         const textContainer = document.getElementById(`choice-text-${chapterId}`);
         const textInput = textContainer.querySelector('input');
         const parentItem = checkbox.closest('.choice-item');
-
         if (checkbox.checked) {
             textContainer.classList.remove('hidden');
             textInput.disabled = false;

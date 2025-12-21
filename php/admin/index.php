@@ -347,6 +347,22 @@ else
                     <?php endif; ?>
                 </div>
             </div>
+            <div class="mb-6">
+                <label for="monster_id" class="block text-sm font-semibold text-gray-300 mb-2">
+                    Monstre du chapitre <span class="text-gray-500 text-xs">(optionnel)</span>
+                </label>
+                <select id="monster_id" name="monster_id"
+                    class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#941515] focus:border-transparent transition-all">
+                    <option value="">Aucun monstre</option>
+                    <?php
+                    $monsters = $db->query('SELECT * FROM Monster ORDER BY name');
+                    foreach ($monsters as $monster): ?>
+                        <option value="<?= $monster['id'] ?>">
+                            <?= htmlspecialchars($monster['name']) ?> (PV: <?= $monster['pv'] ?>, XP: <?= $monster['xp'] ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
             <div
                 class="flex gap-3 justify-end sticky bottom-0 bg-gray-900 pt-4 border-t border-gray-700 -mx-6 px-6 -mb-6 pb-6">
