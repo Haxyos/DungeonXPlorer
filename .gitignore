@@ -1,0 +1,2 @@
+# Ignorer le .env pour éviter de montrer les accès à la base de donnée sur le github
+/.env
