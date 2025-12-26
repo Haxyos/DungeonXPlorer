@@ -47,6 +47,9 @@ Suivez ces étapes pour installer le projet localement :
 git clone https://github.com/Haxyos/DungeonXPlorer.git
 cd DungeonXPplorer
 ```
+## Compte administrateur pour test
+Email : **admin@dungeonxplorer.com**
+Mot de passe : **Admin1234**
 
 ## 👥 Équipe de Développement
 
