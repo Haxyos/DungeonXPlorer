@@ -26,7 +26,7 @@
             <?php endif; ?>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl mb-20">
+        <div class="<?php if (!isset($_SESSION['user_id'])) {echo 'grid grid-cols-1 md:grid-cols-2';} ?> gap-6 w-full max-w-3xl mb-20">
             <div class="group relative bg-gray-900/60 backdrop-blur-md border border-gray-700 hover:border-[#f2a900] rounded-xl p-8 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(242,169,0,0.2)]">
                 <div class="absolute top-0 right-0 -mt-4 -mr-4 w-12 h-12 bg-[#941515] rounded-full flex items-center justify-center border-4 border-[#1A1A1A]">
                     <i class="fa-solid fa-scroll text-white"></i>
@@ -45,73 +45,47 @@
                 <?php endif; ?>
             </div>
 
+            <?php if (!isset($_SESSION['user_id'])): ?>
             <div class="group relative bg-gray-900/60 backdrop-blur-md border border-gray-700 hover:border-red-500 rounded-xl p-8 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(148,21,21,0.3)]">
                 <div class="absolute top-0 right-0 -mt-4 -mr-4 w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center border-4 border-[#1A1A1A]">
                     <i class="fa-solid fa-dice-d20 text-white"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-red-500 mb-3">Continuer</h3>
                 <p class="text-gray-400 text-sm mb-6 h-12">Retrouvez votre fiche de personnage et l'histoire là où vous l'avez laissée.</p>
-                
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="/caracter/selectionCharacter.php" class="inline-block w-full py-3 border-2 border-red-600 text-red-500 hover:bg-red-600 hover:text-white font-bold rounded uppercase tracking-wide transition shadow-lg">
-                        Reprendre
-                    </a>
-                <?php else: ?>
-                    <a href="./php/connection/login.php" class="inline-block w-full py-3 border-2 border-white text-white hover:bg-white hover:text-black font-bold rounded uppercase tracking-wide transition shadow-lg">
-                        Se connecter
-                    </a>
-                <?php endif; ?>
+
+                <a href="./php/connection/login.php" class="inline-block w-full py-3 border-2 border-white text-white hover:bg-white hover:text-black font-bold rounded uppercase tracking-wide transition shadow-lg">
+                    Se connecter
+                </a>
             </div>
+            <?php endif; ?>
         </div>
 
         <div class="w-full max-w-5xl bg-[#1A1A1A]/90 border-t-4 border-[#941515] p-8 md:p-12 shadow-2xl rounded-b-lg text-left">
-            <div class="flex flex-col md:flex-row gap-10 items-start">
+            <div class="flex flex-col md:flex-row">
                 
-                <div class="md:w-2/3">
+                <div>
                     <h2 class="text-3xl font-bold text-white mb-6 border-l-4 border-[#f2a900] pl-4">
                         L'Édito du Gardien
                     </h2>
                     <p class="text-gray-300 leading-relaxed mb-4">
-                        Bienvenue sur <strong>DungeonXplorer</strong>. Ce projet est né d'une passion commune pour les mondes imaginaires et les lancers de dés critiques.
+                        Bienvenue sur <strong>DungeonXplorer</strong>, l'univers de dark fantasy où se mêlent aventure, stratégie et immersion
+                        totale dans les récits interactifs.
                     </p>
                     <p class="text-gray-300 leading-relaxed mb-4">
-                        Ici, vous ne trouverez pas un créateur de mondes infinis, mais une <strong>porte d'entrée unique</strong> vers une aventure soigneusement préparée. Ce site a été conçu pour simplifier la vie des joueurs : plus de feuilles perdues, plus de calculs fastidieux.
+                        Ce projet est né de la volonté de l’association Les Aventuriers du Val Perdu de raviver l’expérience unique
+                        des livres dont vous êtes le héros. Notre vision : offrir à la communauté un espace où chacun peut
+                        incarner un personnage et plonger dans des quêtes épiques et personnalisées.
                     </p>
-                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 mt-6">
-                        <h4 class="text-[#f2a900] font-bold mb-2"><i class="fa-solid fa-book-open mr-2"></i>Qu'est-ce qu'un Jeu de Rôle ?</h4>
-                        <p class="text-sm text-gray-400 italic">
-                            "Un jeu de rôle (JDR) est une expérience narrative où vous incarnez un personnage fictif. À travers vos choix et la chance aux dés, vous influencez le déroulement d'une histoire contée par le Maître du Jeu."
-                        </p>
-                    </div>
+                    <p class="text-gray-300 leading-relaxed mb-4">
+                        Dans sa première version, DungeonXplorer permettra aux joueurs de créer un personnage parmi trois
+                        classes emblématiques — guerrier, voleur, magicien — et d’évoluer dans un scénario captivant, tout en
+                        assurant à chacun la possibilité de conserver sa progression.
+                    </p>
+                    <p class="text-gray-300 leading-relaxed">
+                        Nous sommes enthousiastes de partager avec vous cette application et espérons qu'elle saura vous
+                        plonger au cœur des mystères du Val Perdu !
+                    </p>
                 </div>
-
-                <div class="md:w-1/3 w-full bg-[#111] p-6 rounded border border-gray-800">
-                    <h3 class="text-xl font-bold text-gray-200 mb-4 border-b border-gray-700 pb-2">
-                        Dernières Actualités
-                    </h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <span class="text-[#941515] mr-2 mt-1"><i class="fa-solid fa-dragon"></i></span>
-                            <div>
-                                <span class="block text-[#f2a900] text-sm font-bold">Mise à jour 1.2</span>
-                                <span class="text-gray-500 text-xs">Ajout des fiches de bestiaire.</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-[#941515] mr-2 mt-1"><i class="fa-solid fa-skull"></i></span>
-                            <div>
-                                <span class="block text-[#f2a900] text-sm font-bold">Campagne "Val Perdu"</span>
-                                <span class="text-gray-500 text-xs">Le chapitre 2 est disponible !</span>
-                            </div>
-                        </li>
-                    </ul>
-                    
-                    <div class="mt-8 text-center">
-                        <p class="text-xs text-gray-500 mb-2">Prêt à rejoindre la table ?</p>
-                        <i class="fa-solid fa-arrow-up text-gray-600 animate-bounce"></i>
-                    </div>
-                </div>
-
             </div>
         </div>
 

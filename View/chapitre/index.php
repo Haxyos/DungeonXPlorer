@@ -38,7 +38,7 @@ if (!$chapter) {
 
 include_once '../../php/components/header.php';
 ?>
- 
+ <main class="pt-32 pb-12 px-6 min-h-screen bg-[#1A1A1A] text-white font-sans">
     <div class="mb-6 bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg p-4 border border-gray-700 flex items-center justify-between">
         <div class="flex items-center gap-4">
             <div class="w-12 h-12 bg-[#941515] rounded-full flex items-center justify-center">
@@ -62,14 +62,16 @@ include_once '../../php/components/header.php';
             <?php echo htmlspecialchars($chapter->getTitle()); ?>
         </h1>
     </div>
-    <?php if ($chapter->getImage()): ?>
+
+    <!--
+    <?php /*if ($chapter->getImage()): ?>
         <div class="mb-8 rounded-xl overflow-hidden shadow-2xl border border-gray-700">
             <img
                 src="<?php echo htmlspecialchars($chapter->getImage()); ?>"
                 alt="<?php echo htmlspecialchars($chapter->getTitle()); ?>"
                 class="w-full h-auto">
         </div>
-    <?php endif; ?>
+    <?php endif; */?>-->
 
     <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl p-6 border border-gray-700 mb-8">
         <div class="text-gray-300 leading-relaxed text-lg whitespace-pre-line">
@@ -112,4 +114,5 @@ include_once '../../php/components/header.php';
             </a>
         </div>
     <?php endif; ?>
+</main>
 <?php include_once '../../php/components/footer.php'; ?>
