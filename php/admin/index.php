@@ -1,5 +1,5 @@
 <?php
-//include_once('../components/security_admin.php');
+include_once('../components/security_admin.php');
 include_once('../components/header.php');
 $res = $db->query('SELECT * FROM Chapter order by id desc fetch first 1 rows only');
 $idChapterMax;
@@ -114,27 +114,10 @@ else
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
                             </path>
                         </svg>
-                        Utilisateurs
+                        Ajouter un utilisateur
                     </span>
-                </button>
-                <button onclick="showTab('chapters')" id="tab-chapters" class="tab-button px-6 py-4 font-semibold text-gray-600 hover:text-[#941515] transition-colors">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                        Chapitres
-                    </span>
-                </button>
-                <button onclick="showTab('monsters')" id="tab-monsters" class="tab-button px-6 py-4 font-semibold text-gray-600 hover:text-[#941515] transition-colors">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                        </svg>
-                        Monstres
-                    </span>
-                </button>
+                </a>
             </div>
-        </div>
 
             <div class="overflow-x-auto rounded-lg">
                 <table class="w-full">
@@ -175,7 +158,12 @@ else
 
                             echo '</td>
                                 <td class="px-6 py-4 text-sm">
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">Joueur</span>
+                                    <a href="./delete-user.php?id=' . $user["id"] . '" onclick="return confirm(\'Êtes-vous sûr de vouloir supprimer cet utilisateur ?\')" class="text-red-400 hover:text-red-300 font-semibold transition-colors inline-flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                        Supprimer
+                                    </a>
                                 </td>
                             </tr>';
                         }
@@ -222,6 +210,7 @@ else
                 ?>
             </div>
         </div>
+    </div>
 
     <div id="content-monsters" class="tab-content hidden">
         <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl p-6 border border-gray-700">
@@ -259,44 +248,8 @@ else
                 ?>
             </div>
         </div>
-
-        <!-- Onglet Monstres -->
-        <div id="content-monsters" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Gestion des monstres</h2>
-                    <a href="add-monster.php" class="bg-[#941515] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
-                        + Ajouter un monstre
-                    </a>
-                </div>
-                
-                <!-- Grille des monstres -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <?php
-                    // $monsters = Monster::getAll();
-                    // foreach ($monsters as $monster):
-                    ?>
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div class="bg-gray-200 h-32 rounded mb-3 flex items-center justify-center">
-                            <span class="text-4xl">👾</span>
-                        </div>
-                        <h3 class="font-bold text-center mb-1">Gobelin</h3>
-                        <p class="text-sm text-gray-600 text-center mb-2">PV: 50 | ATK: 10</p>
-                        <div class="flex gap-2">
-                            <a href="edit-monster.php?id=1" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-1 rounded text-sm transition-colors">
-                                Modifier
-                            </a>
-                            <a href="delete-monster.php?id=1" onclick="return confirm('Êtes-vous sûr ?')" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-center py-1 rounded text-sm transition-colors">
-                                Supprimer
-                            </a>
-                        </div>
-                    </div>
-                    <?php // endforeach; ?>
-                </div>
-            </div>
-        </div>
-
     </div>
+
 </div>
 
 <div id="chapterModal"
@@ -553,7 +506,6 @@ else
 </div>
 
 <script>
-<<<<<<< HEAD
 function showTab(tabName) {
     // Cache tous les contenus
     document.querySelectorAll('.tab-content').forEach(content => {
@@ -574,7 +526,6 @@ function showTab(tabName) {
     activeButton.classList.add('active', 'text-[#941515]', 'border-b-2', 'border-[#941515]');
     activeButton.classList.remove('text-gray-600');
 }
-=======
     function toggleChoiceText(checkbox, chapterId) {
         const textContainer = document.getElementById(`choice-text-${chapterId}`);
         const textInput = textContainer.querySelector('input');
@@ -635,7 +586,6 @@ function showTab(tabName) {
         activeButton.classList.add('active', 'text-[#941515]', 'border-b-2', 'border-[#941515]');
         activeButton.classList.remove('text-gray-400');
     }
->>>>>>> dashboardAdmin
 </script>
 
 <?php

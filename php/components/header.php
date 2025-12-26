@@ -2,6 +2,7 @@
 <header>
     <title>DungeonXplorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../CaracterCreation.js"></script>
     <script defer src="../../script/profileButtonScript.js"></script>
     <script src="https://kit.fontawesome.com/68b987a37a.js" crossorigin="anonymous"></script>
     <style>
@@ -30,8 +31,8 @@
                 <div class="min-h-16 group-hover:min-h-0 transition-all duration-700 ease-in-out overflow-hidden">
                     <?php
                     $menuItems = [
-                        ['name' => 'Accueil', 'url' => '/'],
-                        ['name' => 'Profil', 'url' => '#'],
+                        ['name' => '🏠 Accueil', 'url' => '/'],
+                        ['name' => '👤 Profil', 'url' => '/caracter/selectionCharacter.php'],
                     ];
 
                     foreach ($menuItems as $item): ?>
@@ -39,7 +40,13 @@
                             class="block px-6 py-3 text-white hover:bg-red-800 transition-all duration-300 opacity-0 group-hover:opacity-100">
                             <?php echo $item['name']; ?>
                         </a>
-                    <?php endforeach; ?>
+                    <?php endforeach;
+                    if (isset($_SESSION['user_id']) && $_SESSION['est_admin']): ?>
+                        <a href="/php/admin/index.php"
+                            class="block px-6 py-3 text-white hover:bg-red-800 transition-all duration-300 opacity-0 group-hover:opacity-100">
+                            🛠️ Admin
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
 
