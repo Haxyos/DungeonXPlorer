@@ -506,26 +506,6 @@ else
 </div>
 
 <script>
-function showTab(tabName) {
-    // Cache tous les contenus
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-    });
-    
-    // Retire le style actif de tous les boutons
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active', 'text-[#941515]', 'border-b-2', 'border-[#941515]');
-        button.classList.add('text-gray-600');
-    });
-    
-    // Affiche le contenu sélectionné
-    document.getElementById('content-' + tabName).classList.remove('hidden');
-    
-    // Active le bouton sélectionné
-    const activeButton = document.getElementById('tab-' + tabName);
-    activeButton.classList.add('active', 'text-[#941515]', 'border-b-2', 'border-[#941515]');
-    activeButton.classList.remove('text-gray-600');
-}
     function toggleChoiceText(checkbox, chapterId) {
         const textContainer = document.getElementById(`choice-text-${chapterId}`);
         const textInput = textContainer.querySelector('input');

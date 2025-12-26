@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__. '/Hero.php';
-// models/Orc.php
 
 class Stealer extends Hero
 {
@@ -10,7 +9,7 @@ class Stealer extends Hero
     protected $initiative;
     protected $armorItemId;
     protected $primaryWeapon;
-    protected $spellList;
+
     public function __construct()
     {
         
@@ -18,10 +17,10 @@ class Stealer extends Hero
 
     public function constructeurAvecParam ($name, $class, $imagesrc, $bio, $initiative, $armorId, $primaryWeapon)
     {
-        $this->spellList = ['spell1' => "", 'spell2' => ""];
-        $this->health = 6;
-        $this->mana = 4;
-        $this->strength = 3;
+        // Stealer n'a pas de sorts
+        $this->health = 8; // PV moyens
+        $this->mana = 0; // Pas de mana
+        $this->strength = 4; // Force moyenne
         $this->initiative = $initiative;
         $this->armorItemId = $armorId;
         $this->primaryWeapon = $primaryWeapon;
@@ -31,7 +30,7 @@ class Stealer extends Hero
     public function constructeurPréfait($id_personnage)
     {
         global $db;
-        if(!isset($db)) { // Vérification que db existe
+        if(!isset($db)) {
             die("Erreur: La connexion à la base de données n'est pas établie.");
         }
 
@@ -39,16 +38,7 @@ class Stealer extends Hero
         $stmt->execute(['id' => $id_personnage]);
         $hero = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $stmt = $db->prepare('SELECT * FROM Pouvoir WHERE id_heros = :id');
-        $stmt->execute(['id' => $id_personnage]);
-        $pouvoir = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        $listSpellTemp = array();
-        foreach($pouvoir as $spell) {
-            array_push($listSpellTemp, $spell['id_spell']);
-        }
-
-        $this->spellList = $listSpellTemp;
+        // PAS de sorts pour le Stealer
         $this->health = $hero['pv'];
         $this->mana = $hero['mana'];
         $this->strength = $hero['strength'];
@@ -62,54 +52,63 @@ class Stealer extends Hero
     {
         return $this->primaryWeapon->basicAttack();
     }
-    public function castASpell($spell){
-        return -1;
+    
+    public function castASpell($spell)
+    {
+        return -1; // Stealer ne lance pas de sorts
     }
     
     public function takeDamage($damage)
     {
         $this->health -= $damage;
     }
+    
     public function isAlive()
     {
-        if ($this->health > 0){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return $this->health > 0;
     }
+    
     public function getHealth()
     {
         return $this->health;
     }
+    
     public function getArmorItem()
     {
         return $this->armorItemId;
     }
-    public function getSpellList()
-    {
-        return $this->spellList;
-    }
+    
     public function getMana()
     {
         return $this->mana;
     }
+    
     public function getStrength()
     {
         return $this->strength;
     }
+    
     public function getInitiative()
     {
         return $this->initiative;
     }
-    public function getPrimaryWeapon(){
+    
+    public function getPrimaryWeapon()
+    {
         return $this->primaryWeapon;
     }
-    public function getExp(){
+    
+    public function getExp()
+    {
         return $this->xp;
     }
-    public function getLevel(){
+    
+    public function getLevel()
+    {
         return $this->currentLevel;
+    }
+
+    public function getPvMax() {
+        return 8 + ($this->currentLevel * 2); 
     }
 }

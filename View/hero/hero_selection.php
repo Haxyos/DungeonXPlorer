@@ -96,17 +96,7 @@
                             <h3 class="text-[#f2a900] font-semibold mb-3 text-sm uppercase">🎒 Équipement de départ</h3>
                             <div id="equipmentDetails" class="text-gray-300 text-sm space-y-2"></div>
                         </div>
-                        <div id="spellsDiv" style="display: none;" class="bg-gray-900 border border-gray-600 rounded-lg p-4">
-                            <h3 class="text-[#f2a900] font-semibold mb-3 text-sm uppercase">✨ Grimoire (3 sorts)</h3>
-                            <div class="space-y-2">
-                                <?php for($i=1; $i<=3; $i++): ?>
-                                <select name="spell<?= $i ?>" class="w-full px-3 py-2 bg-[#1a1a1a] border border-gray-600 rounded text-white text-sm">
-                                    <option value="">Sort <?= $i ?></option>
-                                    <?php foreach ($spellsList as $s): ?><option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['nom']) ?> (<?= $s['cout_mana'] ?> mana)</option><?php endforeach; ?>
-                                </select>
-                                <?php endfor; ?>
-                            </div>
-                        </div>
+                        
                         <div>
                             <label class="block text-[#f2a900] font-semibold mb-2 text-sm uppercase">⚡ Initiative</label>
                             <input type="number" name="initiative" id="initiativeInput" value="0" min="0" max="10" required class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded text-white focus:border-[#f2a900] transition">
@@ -123,6 +113,7 @@
 </main>
 
 <script>
+    
     const loadouts = <?= json_encode($defaultLoadouts) ?>;
     const items = <?= json_encode($items) ?>;
     
@@ -139,10 +130,8 @@
         const config = loadouts[selectedId];
         const uiConfig = classConfigs[selectedId] || classConfigs[1];
 
-        // Image
         if(config) document.getElementById('classImagePreview').src = config.img;
 
-        // Equipement
         const detailsDiv = document.getElementById('equipmentDetails');
         let html = '';
         if (config) {
@@ -152,22 +141,10 @@
         }
         detailsDiv.innerHTML = html;
 
-        // Sorts
-        const spellsDiv = document.getElementById('spellsDiv');
-        const spellSelects = spellsDiv.querySelectorAll('select');
-        if (selectedId == 2) {
-            spellsDiv.style.display = 'block';
-            spellSelects.forEach(s => s.required = true);
-        } else {
-            spellsDiv.style.display = 'none';
-            spellSelects.forEach(s => s.required = false);
-        }
-
-        // Initiative
         const initInput = document.getElementById('initiativeInput');
         initInput.min = uiConfig.minInit;
         initInput.max = uiConfig.maxInit;
-        initInput.value = uiConfig.minInit; // Reset to min
+        initInput.value = uiConfig.minInit;
         document.getElementById('initiativeHelp').textContent = uiConfig.help;
     }
 

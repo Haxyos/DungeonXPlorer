@@ -16,7 +16,6 @@ class HeroController {
         // --- Configuration (Logique Métier) ---
         $defaultLoadouts = [
             1 => ['img' => '/images/guerrier.png', 'weapon_id' => 10, 'armor_id' => 40, 'shield_id' => 30], // Guerrier
-            2 => ['img' => '/images/sorcier.png', 'weapon_id' => 14, 'armor_id' => 43, 'shield_id' => null], // Mage
             3 => ['img' => '/images/voleur.png', 'weapon_id' => 13, 'armor_id' => 44, 'shield_id' => null]   // Voleur
         ];
 
@@ -35,13 +34,9 @@ class HeroController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_hero'])) {
             $classId = intval($_POST["class"]);
             
-            // Validation spécifique Mage (ID 2)
-            $spells = [];
+            // Bloquer la création de mage (class_id 2)
             if ($classId == 2) {
-                $spells = [$_POST['spell1'], $_POST['spell2'], $_POST['spell3']];
-                if (in_array("", $spells) || count(array_unique($spells)) < 3) {
-                    $error = "Le mage doit avoir 3 sorts uniques.";
-                }
+                $error = "La classe Mage n'est plus disponible.";
             }
 
             if (!$error) {
@@ -56,7 +51,7 @@ class HeroController {
                         'name' => htmlspecialchars($_POST["characterName"]),
                         'class_id' => $classId,
                         'bio' => htmlspecialchars($_POST["descChar"]),
-                        'spells' => $spells
+                        'spells' => []
                     ];
                     
                     $stats = [

@@ -47,6 +47,7 @@ class HeroModel {
             // Suppression dépendances
             $this->db->prepare("DELETE FROM Hero_Progress WHERE hero_id = ?")->execute([$heroId]);
             $this->db->prepare("DELETE FROM Pouvoir WHERE id_heros = ?")->execute([$heroId]);
+            $this->db->prepare("DELETE FROM Inventory WHERE hero_id = ?")->execute([$heroId]);
             // Suppression Héros (vérification user_id pour sécurité)
             $stmt = $this->db->prepare("DELETE FROM Hero WHERE id = ? AND user_id = ?");
             $stmt->execute([$heroId, $userId]);
@@ -98,7 +99,11 @@ class HeroModel {
             $this->db->prepare("INSERT INTO Hero_Progress (user_id, hero_id, chapter_id, status, completion_date) VALUES (?, ?, 1, 'In Progress', NOW())")
                      ->execute([$userId, $heroId]);
 
-            // 3. Ajout des sorts (Si fournis)
+            // 3. Ajout des 3 potions de soin dans l'inventaire
+            $this->db->prepare("INSERT INTO Inventory (hero_id, item_id, quantity) VALUES (?, 50, 3)")
+                     ->execute([$heroId]);
+
+            // 4. Ajout des sorts (Si fournis)
             if (!empty($data['spells'])) {
                 $sqlSpell = "INSERT INTO Pouvoir (id_heros, id_spell) VALUES (?, ?)";
                 $stmtS = $this->db->prepare($sqlSpell);

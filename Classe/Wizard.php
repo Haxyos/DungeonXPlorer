@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__. '/Hero.php';
-// models/Orc.php
 require_once __DIR__. '/../php/Database.php';
 
 class Wizard extends Hero
@@ -12,7 +11,7 @@ class Wizard extends Hero
     protected $armorItemId;
     protected $primaryWeapon;
     protected $shieldItem;
-    protected $spellList;
+
     public function __construct()
     {
         
@@ -20,10 +19,10 @@ class Wizard extends Hero
 
     public function constructeurAvecParam ($name, $class, $imagesrc, $bio, $initiative, $armorId, $primaryWeapon)
     {
-        $this->spellList = ['spell1' => "", 'spell2' => ""];
+        // Pas de liste de sorts, juste Boule de feu automatique
         $this->health = 6;
-        $this->mana = 4;
-        $this->strength = 3;
+        $this->mana = 10; // Plus de mana pour le Wizard
+        $this->strength = 2; // Moins de force physique
         $this->initiative = $initiative;
         $this->armorItemId = $armorId;
         $this->primaryWeapon = $primaryWeapon;
@@ -33,7 +32,7 @@ class Wizard extends Hero
     public function constructeurPréfait($id_personnage)
     {
         global $db;
-        if(!isset($db)) { // Vérification que db existe
+        if(!isset($db)) {
             die("Erreur: La connexion à la base de données n'est pas établie.");
         }
 
@@ -41,16 +40,7 @@ class Wizard extends Hero
         $stmt->execute(['id' => $id_personnage]);
         $hero = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $stmt = $db->prepare('SELECT * FROM Pouvoir WHERE id_heros = :id');
-        $stmt->execute(['id' => $id_personnage]);
-        $pouvoir = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        $listSpellTemp = array();
-        foreach($pouvoir as $spell) {
-            array_push($listSpellTemp, $spell['id_spell']);
-        }
-
-        $this->spellList = $listSpellTemp;
+        // PAS de récupération de sorts depuis la BDD
         $this->health = $hero['pv'];
         $this->mana = $hero['mana'];
         $this->strength = $hero['strength'];
@@ -62,61 +52,80 @@ class Wizard extends Hero
 
     public function handtoHandAttack()
     {
-        return "{$this->name} vous charge avec sa massue.";
+        return "{$this->name} frappe avec son bâton.";
     }
 
-    public function castASpell($spell)
+    public function castASpell($spell = null)
     {
-        return $spell->use();
+        return "🔥 Boule de feu";
     }
+    
+    public function choisirSort()
+    {
+        // Toujours Boule de feu pour le Wizard
+        return (object)[
+            'nom' => 'Boule de feu',
+            'cout_mana' => 5,
+            'degats_base' => 8
+        ];
+    }
+    
     public function takeDamage($damage)
     {
         $this->health -= $damage;
     }
+    
     public function isAlive()
     {
-        if ($this->health > 0){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return $this->health > 0;
     }
+    
     public function getShield()
     {
-        return $this->shieldItem;
+        return null; // Wizard n'a pas de bouclier
     }
+    
     public function getHealth()
     {
         return $this->health;
     }
+    
     public function getArmorItem()
     {
         return $this->armorItemId;
     }
-    public function getSpellList()
-    {
-        return $this->spellList;
-    }
+    
     public function getMana()
     {
         return $this->mana;
     }
+    
     public function getStrength()
     {
         return $this->strength;
     }
+    
     public function getInitiative()
     {
         return $this->initiative;
     }
-    public function getPrimaryWeapon(){
+    
+    public function getPrimaryWeapon()
+    {
         return $this->primaryWeapon;
     }
-    public function getExp(){
+    
+    public function getExp()
+    {
         return $this->xp;
     }
-    public function getLevel(){
+    
+    public function getLevel()
+    {
         return $this->currentLevel;
+    }
+
+    public function getPvMax() {
+        return 6 + ($this->currentLevel * 2); 
     }
 }
