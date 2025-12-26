@@ -1,8 +1,8 @@
 <?php
 
 // controllers/ChapterController.php
-
-require_once 'models/Chapter.php';
+session_start();
+require_once '../../Modele/Chapter.php';
 
 class ChapterController
 {
@@ -11,28 +11,24 @@ class ChapterController
     public function __construct()
     {
         // Exemple de chapitres avec des images
-        $this->chapters[] = new Chapter(
-            1,
-            "La Forêt Enchantée",
-            "Vous vous trouvez dans une forêt sombre et enchantée. Deux chemins se présentent à vous.",
-            "images/forêt.jpg", // Chemin vers l'image
-            [
-                ["text" => "Aller à gauche", "chapter" => 2],
-                ["text" => "Aller à droite", "chapter" => 3]
-            ]
-        );
-
-        $this->chapters[] = new Chapter(
-            2,
-            "Le Lac Mystérieux",
-            "Vous arrivez à un lac aux eaux limpides. Une créature vous observe.",
-            "images/lac.jpg", // Chemin vers l'image
-            [
-                ["text" => "Nager dans le lac", "chapter" => 4],
-                ["text" => "Faire demi-tour", "chapter" => 1]
-            ]
-        );
-
+        include '../../php/Database.php';
+        $res = $db->query("Select * FROM Chapter");
+        
+        
+        while($chapter = $res->fetch()){
+            $liens = [];
+            $linksRes = $db->query("Select * FROM Links where chapter_id = " . (String)$chapter["id"]);
+            while($lien = $linksRes->fetch()){
+                array_push($liens, ["text" => $lien["description"], "chapter" => $lien["next_chapter_id"]]);
+            }
+            $this->chapters[] = new Chapter(
+                $chapter["id"],
+                $chapter["titre"],
+                $chapter["content"],
+                $chapter["image"], // Chemin vers l'image
+                $liens
+            );
+        }
     }
 
     public function show($id)
@@ -40,7 +36,7 @@ class ChapterController
         $chapter = $this->getChapter($id);
 
         if ($chapter) {
-            include 'view/chapter.php'; // Charge la vue pour le chapitre
+            include '../View/chapitre/'; // Charge la vue pour le chapitre
         } else {
             // Si le chapitre n'existe pas, redirige vers un chapitre par défaut ou affiche une erreur
             header('HTTP/1.0 404 Not Found');

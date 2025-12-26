@@ -35,7 +35,7 @@
                 <p class="text-gray-400 text-sm mb-6 h-12">Créez votre héros et plongez dans l'univers défini par votre Maître du Jeu.</p>
                 
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="./php/game/create_character.php" class="inline-block w-full py-3 bg-[#f2a900] hover:bg-yellow-500 text-black font-bold rounded uppercase tracking-wide transition shadow-lg">
+                    <a href="/caracter/selectionCharacter.php" class="inline-block w-full py-3 bg-[#f2a900] hover:bg-yellow-500 text-black font-bold rounded uppercase tracking-wide transition shadow-lg">
                         Commencer
                     </a>
                 <?php else: ?>
@@ -53,7 +53,7 @@
                 <p class="text-gray-400 text-sm mb-6 h-12">Retrouvez votre fiche de personnage et l'histoire là où vous l'avez laissée.</p>
                 
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="./php/game/dashboard.php" class="inline-block w-full py-3 border-2 border-red-600 text-red-500 hover:bg-red-600 hover:text-white font-bold rounded uppercase tracking-wide transition shadow-lg">
+                    <a href="/caracter/selectionCharacter.php" class="inline-block w-full py-3 border-2 border-red-600 text-red-500 hover:bg-red-600 hover:text-white font-bold rounded uppercase tracking-wide transition shadow-lg">
                         Reprendre
                     </a>
                 <?php else: ?>

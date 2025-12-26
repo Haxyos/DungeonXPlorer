@@ -10,6 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_hero_id'])) {
                 ':user_id' => $userId
             ]);
 
+            $stmt2 = $db->prepare("DELETE FROM Hero_Progress WHERE hero_id = :id AND user_id = :user_id");
+            $stmt2->execute([
+                ':id' => $heroIdToDelete,
+                ':user_id' => $userId
+            ]);
+
             if ($stmt->rowCount() > 0) {
                 header("Location: " . $_SERVER['PHP_SELF']);
                 exit();

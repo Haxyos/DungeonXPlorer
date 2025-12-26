@@ -31,8 +31,8 @@
                 <div class="min-h-16 group-hover:min-h-0 transition-all duration-700 ease-in-out overflow-hidden">
                     <?php
                     $menuItems = [
-                        ['name' => 'Accueil', 'url' => '/'],
-                        ['name' => 'Profil', 'url' => '#'],
+                        ['name' => '🏠 Accueil', 'url' => '/'],
+                        ['name' => '👤 Profil', 'url' => '/caracter/selectionCharacter.php'],
                     ];
 
                     foreach ($menuItems as $item): ?>
@@ -40,7 +40,13 @@
                             class="block px-6 py-3 text-white hover:bg-red-800 transition-all duration-300 opacity-0 group-hover:opacity-100">
                             <?php echo $item['name']; ?>
                         </a>
-                    <?php endforeach; ?>
+                    <?php endforeach;
+                    if (isset($_SESSION['user_id']) && $_SESSION['est_admin']): ?>
+                        <a href="/php/admin/index.php"
+                            class="block px-6 py-3 text-white hover:bg-red-800 transition-all duration-300 opacity-0 group-hover:opacity-100">
+                            🛠️ Admin
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -63,7 +69,7 @@
             <?php
             if (isset($_SESSION['user_id'])) {
                 echo "
-                    <a href='https://dev-dx01.users.info.unicaen.fr/php/settings.php' class='hover:text-[#f2a900] py-1'>Paramètre</a>
+                    <a href='https://dev-dx01.users.info.unicaen.fr/php/settings.php' class='hover:text-[#f2a900] py-1'>Paramètres</a>
                     <a href='https://dev-dx01.users.info.unicaen.fr/php/connection/logout.php' class='hover:text-[#f2a900] py-1'>Se déconnecter</a>
                     ";
             } else {
