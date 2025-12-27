@@ -17,7 +17,6 @@
 ### ⚔️ Création de Personnage Avancée
 * **Classes Jouables :**
     * 🛡️ **Guerrier :** Tank résistant (PV élevés, Bouclier).
-    * 🔮 **Sorcier :** Maître des arcanes (Gestion du Mana, Grimoire de 3 sorts).
     * 🗡️ **Voleur :** Agile et rapide (Bonus d'initiative).
 * **Visualisation Pixel Art :** Avatar dynamique selon la classe sélectionnée.
 
