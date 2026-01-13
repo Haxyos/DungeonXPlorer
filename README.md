@@ -58,7 +58,7 @@ Projet réalisé par :
 * [**Delacoudre Willelm**](https://github.com/Haxyos)
 * [**Brillant Lukas**](https://github.com/Lukas-bt)
 * [**Heuzé Raphaël**](https://github.com/Raphfal)
-* [**Violette Alex**](https://github.com/Alexzeboulet)
+* [**Violette Alex**](https://github.com/Alex-VLT)
 
 L'entièreté du projet se trouve sur la branche **main**
 
